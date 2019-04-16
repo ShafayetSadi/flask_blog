@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if title %}
+            <title>{{ title}}</title>
+        {% else %}
+            <title>My flask blog</title>
+        {% endif %}
+    </head>
+
+    <body>
+        {% for post in posts %}
+            <h1>{{ post.title }}</h1>
+            <P>By {{ post.author }} on {{ post.date }}</P>
+            <P>{{ post.content }}</P>
+        {% endfor %}
+    </body>
+</html>
