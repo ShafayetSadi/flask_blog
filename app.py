@@ -7,7 +7,7 @@ app.config['SECRET_KEY'] = '0270e77bd9e8c8ab55ab4b2cbcccdaeb'
 posts = [
     {
         "author": "Shafayet Sadi",
-        "title": "Hello Word",
+        "title": "Hello World",
         'content': 'My first post.I have written a python program',
         'date': 'April 16, 2019',
     },
