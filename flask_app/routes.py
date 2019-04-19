@@ -1,10 +1,23 @@
 from flask import render_template, url_for, flash, redirect, request
-from application.forms import ResistrationForm, LoginForm
-from application.models import User, Post
-from application import app, db, bcrypt
+from flask_app.forms import ResistrationForm, LoginForm
+from flask_app.models import User, Post
+from flask_app import app, db, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
 
-
+posts = [
+    {
+        "author": "Shafayet Sadi",
+        "title": "Hello World",
+        'content': 'My first post.I have written a python program',
+        'date': 'April 16, 2019',
+    },
+    {
+        "author": "Sifat Jaman",
+        "title": "Hello Hexa Core",
+        'content': 'My first post.Welcome to Hexa Core Assylum',
+        'date': 'April 16, 2019',
+    },
+]
 
 @app.route('/')
 @app.route('/home')
