@@ -5,6 +5,10 @@ from flask_app.models import User
 
 
 class ResistrationForm(FlaskForm):
+    first_name = StringField('First Name',
+                            validators=[DataRequired(), Length(min=3, max=50)])
+    last_name = StringField('Last Name',
+                            validators=[DataRequired(), Length(min=3, max=50)])
     user_name = StringField('Username',
                             validators=[DataRequired(), Length(min=4, max=20)])
     email = StringField('Email',

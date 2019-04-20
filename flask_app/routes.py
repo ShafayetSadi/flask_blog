@@ -36,7 +36,7 @@ def register():
     form = ResistrationForm()
     if form.validate_on_submit():
         hash_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(user_name=form.user_name.data, email=form.email.data, password=hash_pass)
+        user = User(first_name=form.first_name.data, last_name=form.last_name.data, user_name=form.user_name.data, email=form.email.data, password=hash_pass)
         db.session.add(user)
         db.session.commit()
         flash("Your account has been created! You are now able to log in.", "success")
