@@ -1,5 +1,5 @@
-from flask import render_template, url_for, flash, redirect, request
-from flask_app.forms import ResistrationForm, LoginForm, UpdateAccount
+from flask import render_template, url_for, flash, redirect, request, abort
+from flask_app.forms import ResistrationForm, LoginForm, UpdateAccount, PostForm
 from flask_app.models import User, Post
 from flask_app import app, db, bcrypt
 from flask_login import login_user, logout_user, current_user, login_required
@@ -7,30 +7,18 @@ import secrets
 import os
 from PIL import Image
 
-posts = [
-    {
-        "author": "Shafayet Sadi",
-        "title": "Hello World",
-        'content': 'My first post.I have written a python program',
-        'date': 'April 16, 2019',
-    },
-    {
-        "author": "Sifat Jaman",
-        "title": "Hello Hexa Core",
-        'content': 'My first post.Welcome to Hexa Core Assylum',
-        'date': 'April 16, 2019',
-    },
-]
 
 @app.route('/')
 @app.route('/home')
-
 def home():
+    posts = Post.query.all()
     return render_template('home.html', posts=posts)
+
 
 @app.route('/about')
 def about():
     return render_template('about.html', title='About Page')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -39,12 +27,14 @@ def register():
     form = ResistrationForm()
     if form.validate_on_submit():
         hash_pass = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(first_name=form.first_name.data, last_name=form.last_name.data, user_name=form.user_name.data, email=form.email.data, password=hash_pass)
+        user = User(first_name=form.first_name.data, last_name=form.last_name.data,
+                    user_name=form.user_name.data, email=form.email.data, password=hash_pass)
         db.session.add(user)
         db.session.commit()
         flash("Your account has been created! You are now able to log in.", "success")
         return redirect(url_for('login'))
     return render_template('register.html', title="Register", form=form)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -67,6 +57,7 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('home'))
+
 
 def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
@@ -102,3 +93,50 @@ def account():
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
     return render_template('account.html', title='Account Page', image_file=image_file, form=form)
+
+
+@app.route("/post/new", methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_post.html', title='New Post', form=form, lagend='New Post')
+
+@app.route('/post/<post_id>')
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
+
+@app.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
+@login_required
+def update_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
+        db.session.commit()
+        flash('Your post has been updated!', 'success')
+        return redirect(url_for('post', post_id=post.id))
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+    return  render_template('create_post.html', title='Update Post', form=form, lagend='Update Post')
+
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    if post.author != current_user:
+        abort(403)
+    db.session.delete(post)
+    db.session.commit()
+    flash('Your post has been deleted!', 'success')
+    return redirect(url_for('home'))

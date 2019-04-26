@@ -7,6 +7,7 @@ from flask_login import UserMixin
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(50), nullable=False)
@@ -17,17 +18,16 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(60), nullable=False)
     post = db.relationship('Post', backref='author', lazy=True)
 
-
     def __repr__(self):
-        return f"User('{self.user_name}', '{self.email}', '{self.img_file}')"
+        return f"User('{self.user_name}', '{self.email}', '{self.image_file}')"
 
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String, nullable=False)
     date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.email}', '{self.img_file}')"
+        return f"Post('{self.title}', '{self.email}', '{self.image_file}')"
