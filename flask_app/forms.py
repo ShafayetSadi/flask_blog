@@ -24,7 +24,7 @@ class ResistrationForm(FlaskForm):
         user = User.query.filter_by(user_name=user_name.data).first()
         if user:
             raise ValidationError('That username is taken. Please choose another one.')
-    
+
     def validate_email(self, email):
         email = User.query.filter_by(email=email.data).first()
         if email:
@@ -56,7 +56,7 @@ class UpdateAccount(FlaskForm):
             user = User.query.filter_by(user_name=user_name.data).first()
             if user:
                 raise ValidationError('That username is taken. Please choose another one.')
-    
+
     def validate_email(self, email):
         if email.data != current_user.email:
             email = User.query.filter_by(email=email.data).first()
