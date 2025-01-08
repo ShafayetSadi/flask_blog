@@ -56,8 +56,7 @@ def login():
             next_page = request.args.get("next")
             flash("You have successfully loged in!", "success")
             return redirect(next_page) if next_page else redirect(url_for("home"))
-        else:
-            flash("Login Unsuccessful. Please check email and password", "danger")
+        flash("Login Unsuccessful. Please check email and password", "danger")
     return render_template("login.html", title="Login", form=form)
 
 
@@ -94,7 +93,7 @@ def account():
         db.session.commit()
         flash("Your account has been updated!", "success")
         return redirect(url_for("account"))
-    elif request.method == "GET":
+    if request.method == "GET":
         form.first_name.data = current_user.first_name
         form.last_name.data = current_user.last_name
         form.user_name.data = current_user.user_name
@@ -141,7 +140,7 @@ def update_post(post_id):
         db.session.commit()
         flash("Your post has been updated!", "success")
         return redirect(url_for("post", post_id=post.id))
-    elif request.method == "GET":
+    if request.method == "GET":
         form.title.data = post.title
         form.content.data = post.content
     return render_template(
