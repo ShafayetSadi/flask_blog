@@ -3,8 +3,6 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
-from flask_app import routes
-
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "0270e77bd9e8c8ab55ab4b2cbcccdaeb"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = "True"
