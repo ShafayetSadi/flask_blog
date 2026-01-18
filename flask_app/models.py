@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from flask_login import UserMixin
 
@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     last_name = db.Column(db.String(50), nullable=False)
     user_name = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default="defult.jpg")
+    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
     password = db.Column(db.String(60), nullable=False)
     post = db.relationship("Post", backref="author", lazy=True)
 
@@ -27,9 +27,9 @@ class User(db.Model, UserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
-    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now(timezone.utc))
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
     def __repr__(self):
-        return f"Post('{self.title}', '{self.email}', '{self.image_file}')"
+        return f"Post('{self.title}', '{self.user_id.email}', '{self.date}')"
